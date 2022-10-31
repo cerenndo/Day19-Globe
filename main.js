@@ -6,8 +6,12 @@ require([
     "esri/layers/CSVLayer",
     "dojo/domReady!" // will not be called until DOM is ready
     ], function (
-    Map,SceneView,TileLayer,Basemap,CSVLayer) 
-        {
+    Map,
+    SceneView,
+    TileLayer,
+    Basemap,
+    CSVLayer
+    ) {
         const url = "./proofread.csv";
 
         const csvLayer = new CSVLayer({
@@ -40,19 +44,27 @@ require([
             }
             };
   
+      const satelliteLayer = new TileLayer({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        title: "satellite"
+      })
+      
+      const fireflyLayer = new TileLayer({
+        url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/HalfEarthFirefly/MapServer",
+        title: "half-earth-firefly"
+      })
+      
+      const basemap = new Basemap({
+        baseLayers: [satelliteLayer, fireflyLayer],
+        title: "half-earth-basemap",
+        id: "half-earth-basemap"
+      });
+
+
       
       const map = new Map({
-          basemap: new Basemap({
-              baseLayers: [new TileLayer({
-                  url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/VintageShadedRelief/MapServer",
-                  opacity: 0.7,
-                  minScale: 0
-              })]
-          }),
-          ground: {
-              surfaceColor: [255, 255, 255]
-          }
-          layers: [csvLayer]
+        basemap: basemap,
+        layers: [csvLayer]
       });
     
       const view = new SceneView({
