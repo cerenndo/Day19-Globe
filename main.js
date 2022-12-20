@@ -4,15 +4,15 @@ require([
     "esri/layers/TileLayer",
     "esri/Basemap",
     "esri/layers/CSVLayer",
-
+    "esri/core/watchUtils",
     "dojo/domReady!" // will not be called until DOM is ready
     ], function (
     Map,
     SceneView,
     TileLayer,
     Basemap,
-
-    CSVLayer
+    CSVLayer,
+    watchUtils
     ) {
         const url = "./proofread.csv";
 
@@ -44,37 +44,76 @@ require([
                 ]
             }
             };
+
+      function rotate() {
+        if (!view.interacting) {
+          const camera = view.camera.clone();
+          camera.position.longitude -= 0.2;
+          view.goTo(camera, { animate: false });
+          requestAnimationFrame(rotate);
+        }
+      }
+
+      const satelliteLayer = new TileLayer({
+        url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        title: "satellite"
+      })
+
+      const fireflyLayer = new TileLayer({
+        url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/HalfEarthFirefly/MapServer",
+        title: "half-earth-firefly"
+      })
   
       const basemap = new Basemap({
-        baseLayers: [
-          new TileLayer({
-            url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/HalfEarthFirefly/MapServer",
-            copyright: "ESRI Living Atlas"
-          })
-        ]
+        baseLayers: [satelliteLayer, fireflyLayer],
+        title: "half-earth-basemap",
+        id: "half-earth-basemap"
       });
       
       const map = new Map({
         basemap: basemap,
         layers: [csvLayer]
       });
+
+      document.getElementById("start-globe").addEventListener("click", function () {
+        closeMenu();
+        view.when(function () {
+          watchUtils.whenFalseOnce(view, "updating", rotate);
+        });
+      });
+
+      document.getElementById("container").addEventListener("click", function (e) {
+        if (e.target.id === "container") {
+          closeMenu();
+          view.when(function () {
+            watchUtils.whenFalseOnce(view, "updating", rotate);
+          });
+        }
+      });
+
+      function closeMenu() {
+        document.getElementById("container").style.display = "none";
+        view.container.style.filter = "blur(0px)";
+      }
+
+
+      function rotate() {
+        if (!view.interacting) {
+          const camera = view.camera.clone();
+          camera.position.longitude -= 0.2;
+          view.goTo(camera, { animate: false });
+          requestAnimationFrame(rotate);
+        }
+      };
     
       const view = new SceneView({
         map: map,
-        alphaCompositingEnabled: true,
-        qualityProfile: "high",
         camera: {
-          position: [-5.03975781, 44.94826384, 15021223.30821],
+          position: [-5.03975781, 44.94826384, 26001223.30821],
           heading: 0.03,
           tilt: 0.3
         },
         popup: {
-          dockEnabled: true,
-          dockOptions: {
-            position: "top-right",
-            breakpoint: false,
-            buttonEnabled: true
-          },
           collapseEnabled: false
         },
         container: "sceneContainer",
@@ -82,7 +121,7 @@ require([
           starsEnabled: false,
           atmosphereEnabled: false,
           lighting: {
-            directShadowsEnabled: false,
+            directShadowsEnabled: true,
             date: "Sun Jun 21 2019 16:19:18 GMT+0200 (Central European Summer Time)"
           },
           background: {
@@ -97,7 +136,8 @@ require([
           },
         },
         ui: {
-          components: ["zoom"]
+          components: ["zoom", "compass", "home" ]
          }
-      });  
+      });
+      
     });

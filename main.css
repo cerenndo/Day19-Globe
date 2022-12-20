@@ -1,10 +1,81 @@
-Body {
-    padding: 0;
-    margin: 0;
-  }
-  
+html,
+body,
+#viewDiv,
+#container {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  color: #e5e5e5;
+  font-family: "Avenir Next","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+
   #sceneContainer {
     height: 100vh;
     width: 100vw;
-    background: rgb(0,0,0);
   }
+
+/* intro and about page */
+
+#viewDiv {
+  filter: blur(10px);
+  transition: filter 0.4s;
+}
+
+#container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+#introDiv {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  min-height: 10px;
+  flex: 1;
+  background-color: hsla(0, 0%, 0%, 0.755);
+  padding: 3em;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+#introDiv h1 {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+#introDiv p {
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none;
+}
+
+#start-globe {
+  border-radius: 0.2em;
+  padding: 0.8em 1.5em;
+  font-size: 1em;
+  margin: 2em auto;
+  display: block;
+  border: 1px solid rgba(198, 9, 81, 1);
+  background: transparent;
+  color: rgba(198, 9, 81, 1);
+}
+
+#start-globe:hover {
+  color: white;
+  background: rgb(198, 9, 81, 0.5);
+  border: 1px solid white;
+  transition: all 0.5s;
+  cursor: pointer;
+}
